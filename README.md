@@ -5,9 +5,7 @@
 [![GoReportCard](https://goreportcard.com/badge/github.com/uber/makisu)](https://goreportcard.com/report/github.com/uber/makisu)
 [![Github Release](https://img.shields.io/github/release/uber/makisu.svg)](https://github.com/uber/makisu/releases)
 
-**This project will be deprecated and be archived by 4th of May 2021**
-
-The makisu project is no longer actively maintained and will soon be archived. Please read the details [in this issue](https://github.com/uber/makisu/issues/365).
+# Makisu
 
 Makisu is a fast and flexible Docker image build tool designed for unprivileged containerized environments such as Mesos or Kubernetes.
 
@@ -35,16 +33,16 @@ different languages. The motivation and mechanism behind it are explained in htt
 - [Contact](#contact)
 
 
-# Building Makisu
+## Building Makisu
 
-## Building Makisu image
+### Building Makisu image
 
 To build a Docker image that can perform builds inside a container:
 ```
 make images
 ```
 
-## Building Makisu binary and build simple images
+### Building Makisu binary and build simple images
 
 To get the makisu binary locally:
 ```
@@ -55,11 +53,11 @@ For a Dockerfile that doesn't have RUN, makisu can build it without Docker daemo
 makisu build -t ${TAG} --dest ${TAR_PATH} ${CONTEXT}
 ```
 
-# Running Makisu
+## Running Makisu
 
 For a full list of flags, run `makisu build --help` or refer to the README [here](docs/COMMAND.md).
 
-## Makisu anywhere
+### Makisu anywhere
 
 To build Dockerfiles that contain RUN, Makisu needs to run in a container.
 To try it locally, the following snippet can be placed inside your `~/.bashrc` or `~/.zshrc`:
@@ -89,14 +87,14 @@ Note:
 * The `--modifyfs=true` option let Makisu assume ownership of the filesystem inside the container. Files in the container that don't belong to the base image will be overwritten at the beginning of build.
 * The `--commit=explicit` option let Makisu only commit layer when it sees `#COMMIT` and at the end of the Dockerfile. See ["Explicit Commit and Cache"](#explicit-commit-and-cache) for more details.
 
-## Makisu on Kubernetes
+### Makisu on Kubernetes
 
 Makisu makes it easy to build images from a GitHub repository inside Kubernetes. A single pod (or job) is
 created with an init container, which will fetch the build context through git or other means, and place
 that context in a designated volume. Once it completes, the Makisu container will be created and executes
 the build, using that volume as its build context.
 
-### Creating registry configuration
+#### Creating registry configuration
 
 Makisu needs registry configuration mounted in to push to a secure registry.
 The config format is described in [documentation](docs/REGISTRY.md).
@@ -106,16 +104,16 @@ $ kubectl create secret generic docker-registry-config --from-file=./registry.ya
 secret/docker-registry-config created
 ```
 
-### Creating Kubernetes job spec
+#### Creating Kubernetes job spec
 
 To setup a Kubernetes job to build a GitHub repository and push to a secure registry, you can refer to our Kubernetes job spec [template](examples/k8s/github-job-template.yaml) (and out of the box [example](examples/k8s/github-job.yaml)) .
 
 With such a job spec, a simple `kubectl create -f job.yaml` will start the build.
 The job status will reflect whether the build succeeded or failed
 
-# Using cache
+## Using cache
 
-## Configuring distributed cache
+### Configuring distributed cache
 
 Makisu supports distributed cache, which can significantly reduce build time, by up to 90% for some of Uber's code repos.
 Makisu caches docker image layers both locally and in docker registry (if --push parameter is provided), and uses a separate key-value store to map lines of a Dockerfile to names of the layers.
@@ -127,7 +125,7 @@ Cache has a 14 day TTL by default, which can be configured with `--local-cache-t
 
 For more options on cache, please see [Cache](docs/CACHE.md).
 
-## Explicit commit and cache
+### Explicit commit and cache
 
 By default, Makisu will cache each directive in a Dockerfile. To avoid committing and caching everything, the layer cache can be further optimized via explicit caching with the `--commit=explicit` flag.
 Dockerfile directives may then be manually cached using the `#!COMMIT` annotation:
@@ -155,7 +153,7 @@ ENTRYPOINT ["/bin/bash"]
 ```
 In this example, only 2 additional layers on top of base image will be generated and cached.
 
-# Configuring Docker Registry
+## Configuring Docker Registry
 
 For the convenience to work with any public Docker Hub repositories including library/.*, a default config is provided:
 ```
@@ -176,7 +174,7 @@ Registry configs can be passed in through the `--registry-config` flag, either a
 ```
 For more details on configuring Makisu to work with your registry client, see the [documentation](docs/REGISTRY.md).
 
-# Comparison With Similar Tools
+## Comparison With Similar Tools
 
 ### Bazel
 
@@ -193,10 +191,10 @@ On the other hand, Makisu has some performance tweaks for large images with mult
 BuildKit and img depend on runc/containerd and supports parallel stage executions, whereas Makisu and most other tools execute Dockefile in order.
 However, BuildKit and img still need seccomp and AppArmor to be disabled to launch nested containers, which is not ideal and may not be doable in some production environments.
 
-# Contributing
+## Contributing
 
 Please check out our [guide](docs/CONTRIBUTING.md).
 
-# Contact
+## Contact
 
 To contact us, please join our [Slack channel](https://join.slack.com/t/uber-container-tools/shared_invite/enQtNTIxODAwMDEzNjM1LWIwYzIxNmUwOGY3MmVmM2MxYTczOTQ4ZDU0YjAxMTA0NDgyNzdlZTA4ZWVkZGNlMDUzZDA1ZTJiZTQ4ZDY0YTM).
